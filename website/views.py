@@ -10,7 +10,7 @@ views = Blueprint('views', __name__)
 @views.route('/',methods=['GET', 'POST'])
 def Index():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM tokens FETCH FIRST 5 ROWS ONLY"
+    s = "SELECT * FROM tokens FETCH FIRST 50 ROWS ONLY"
     cur.execute(s) # Execute the SQL
     list_users = cur.fetchall()
     return render_template('index.html', list_users = list_users)
