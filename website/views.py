@@ -15,7 +15,22 @@ def Index():
     list_users = cur.fetchall()
     return render_template('index.html', list_users = list_users)
 
-@views.route('/test',methods=['GET', 'POST'])
-def Testing():
-    return render_template('test.html')
+@views.route('/search',methods=['GET', 'POST'])
+def search():
+    token=""
+    if request.method == 'POST':
+        search_term = request.form.get('search')
+
+        if len(search_term)<1:
+            flash('Search term is too short', category='error')
+        else:
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            s = "SELECT * FROM tokens WHERE token = '" + search_term.lower() + "'"
+            cur.execute(s) # Execute the SQL
+            token = cur.fetchall()
+            flash('Searched!', category='success')
+
+    return render_template('search.html', token=token)
+
+
 

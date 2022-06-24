@@ -18,5 +18,8 @@ def create_app():
     from .views import views
     app.register_blueprint(views,url_prefix='/')
 
+    # from .actions import actions
+    # app.register_blueprint(actions,url_prefix='/')
+
     return app 
 

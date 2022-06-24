@@ -1,0 +1,79 @@
+{% extends "base.html" %} 
+{% block title %}Test{% endblock %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header" style="background-color:white">
+        <div class="display-5">Melex Lexicon Search</div> 
+    </div>
+    <div class="card-body">
+        <form class="d-flex container " method="POST" role="search">
+            <input
+              class="form-control form-control-lg me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              id="search"
+              name="search"
+            />
+            <button class="btn btn-lg btn-outline-success" type="submit">
+              Search
+            </button>
+          </form>    
+          
+        <br/>
+        <br/>
+        <div class="container card-body">
+            {% if token != "" %}
+              {% for tk in token %}
+                <p class="text-xl-left display-6">{{tk[1]}}</p>
+                <!-- <p class="text-md-left lead">{{tk[2]}}</p> -->
+
+
+                <hr class="divider">
+                <table class="table table-borderless table-reflow text-xl-left">
+                  <tbody>
+                    <tr>
+                      <td>Token Status</td>
+                      <td>{{tk[5]}}</td>
+                    </tr>
+                    <tr>
+                      <td>Language</td>
+                      <td>{{tk[6]}}</td>
+                    </tr>
+                    <tr>
+                      <td>Out Of Vocabulary OOV</td>
+                      <td>{{tk[7]}}</td>
+                    </tr>
+                    <tr>
+                      <td>Soundex</td>
+                      <td>{{tk[8]}}</td>
+                    </tr>
+                    <tr>
+                      <td>Metaphone Version 2</td>
+                      <td>{{tk[9]}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <hr class="divider">
+<!-- 
+                <p class="text-md-left">Token Status - {{tk[5]}}</p>
+                <p class="text-md-left">Language - {{tk[6]}}</p>
+                <p class="text-md-left">Out Of Vocabulary OOV - {{tk[7]}}</p>
+                <p class="text-md-left">Soundex - {{tk[8]}}</p>
+                <p class="text-md-left">Metaphone Version 2- {{tk[9]}}</p>
+                <p class="text-md-left">Translated - {{tk[2]}}</p>
+                <p class="text-md-left">Lemmatized - {{tk[3]}}</p>
+                <p class="text-md-left">Corrected - {{tk[4]}}</p> -->
+              {% endfor %}
+            {% else %}
+                <p class="text-xl-left">No Result</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
