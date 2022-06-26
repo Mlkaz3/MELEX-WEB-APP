@@ -1,19 +1,62 @@
+from logging import error
+import re
 from unicodedata import category
 from flask import Blueprint, jsonify,request, render_template, flash, redirect, url_for
 from graphviz import render
 import psycopg2 #pip install psycopg2 
 import psycopg2.extras
 from . import conn
+import string
+
 
 views = Blueprint('views', __name__)
 
 @views.route('/',methods=['GET', 'POST'])
 def Index():
+    language = ""
+    oov  =""
+    wordstatus =""
+    list_users = []
+    return render_template('index.html',list_users = list_users,language=language,oov=oov,wordstatus=wordstatus)
+
+
+@views.route('/filter',methods=['GET', 'POST'])
+def filter():
+    language = ""
+    oov  =""
+    wordstatus =""
+
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     s = "SELECT * FROM tokens FETCH FIRST 50 ROWS ONLY"
     cur.execute(s) # Execute the SQL
     list_users = cur.fetchall()
-    return render_template('index.html', list_users = list_users)
+
+    if request.method == 'POST':
+        # get value of each radio button
+        language = request.form.get('language')
+        oov = request.form.get('oov')
+        wordstatus = request.form.get('wordstatus')
+
+        if language!=None and oov!=None and wordstatus!=None:
+            s = "SELECT * FROM tokens WHERE langid = " + language + " AND oov = " + oov + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
+        elif language!=None and oov!=None:
+            s = "SELECT * FROM tokens WHERE langid = '" + language + "' AND oov = " + oov + " FETCH FIRST 50 ROWS ONLY"
+        elif oov!=None and wordstatus!=None:
+            s = "SELECT * FROM tokens WHERE oov = " + oov + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
+        elif language!=None and wordstatus!=None:
+            s = "SELECT * FROM tokens WHERE langid = '" + language + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
+        elif language!=None:
+            s = "SELECT * FROM tokens WHERE langid = " + language + " FETCH FIRST 50 ROWS ONLY"
+        elif oov!=None:
+            s = "SELECT * FROM tokens WHERE oov = " + oov + " FETCH FIRST 50 ROWS ONLY"
+        elif wordstatus!=None:
+            s = "SELECT * FROM tokens WHERE tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
+        
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+
+    return render_template('filter.html', list_users = list_users,language=language,oov=oov,wordstatus=wordstatus)
+
 
 @views.route('/search',methods=['GET', 'POST'])
 def search():
@@ -32,12 +75,26 @@ def search():
 
     return render_template('search.html', token=token)
 
+@views.route('/library', methods=['GET','POST'])
+def library():
+    alphabet = None
+    letter = string.ascii_lowercase
 
-# work on it for filter view 
-@views.route('/radio_filter', methods=['GET','POST'])
-def radio_filter():
-    user_answer = request.form.get('search')
-    return redirect(url_for('views.Index'))
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    s = "SELECT * FROM tokens FETCH FIRST 50 ROWS ONLY"
+    cur.execute(s) # Execute the SQL
+    output_list = cur.fetchall()
+
+    if request.method == 'POST':
+        alphabet = request.form.get('alphabet')
+
+        if alphabet!=None: 
+            s = "SELECT * FROM tokens WHERE token LIKE '" + alphabet+ "%' ORDER BY token FETCH FIRST 50 ROWS ONLY "
+            cur.execute(s) # Execute the SQL
+            output_list = cur.fetchall()
+
+    return render_template('library.html', letter=letter, output_list=output_list, alphabet=alphabet)
+
 
 
 # @views.route('/search',methods=['GET', 'POST'])
