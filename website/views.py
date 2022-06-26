@@ -41,11 +41,11 @@ def filter():
         if language!=None and oov!=None and wordstatus!=None:
             s = "SELECT * FROM tokens WHERE langid = " + language + " AND oov = " + oov + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
         elif language!=None and oov!=None:
-            s = "SELECT * FROM tokens WHERE langid = '" + language + "' AND oov = " + oov + " FETCH FIRST 50 ROWS ONLY"
+            s = "SELECT * FROM tokens WHERE langid = " + language + " AND oov = " + oov + " FETCH FIRST 50 ROWS ONLY"
         elif oov!=None and wordstatus!=None:
             s = "SELECT * FROM tokens WHERE oov = " + oov + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
         elif language!=None and wordstatus!=None:
-            s = "SELECT * FROM tokens WHERE langid = '" + language + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
+            s = "SELECT * FROM tokens WHERE langid = " + language + " AND tokenstatus = '" + wordstatus + "' FETCH FIRST 50 ROWS ONLY"
         elif language!=None:
             s = "SELECT * FROM tokens WHERE langid = " + language + " FETCH FIRST 50 ROWS ONLY"
         elif oov!=None:
