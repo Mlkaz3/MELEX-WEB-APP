@@ -7,9 +7,10 @@ import psycopg2 #pip install psycopg2
 import psycopg2.extras
 from . import conn
 import string
-
+from .models import Tokens
 
 views = Blueprint('views', __name__)
+db = ""
 
 @views.route('/',methods=['GET', 'POST'])
 def Index():
@@ -56,6 +57,27 @@ def filter():
         list_users = cur.fetchall()
 
     return render_template('filter.html', list_users = list_users,language=language,oov=oov,wordstatus=wordstatus)
+
+
+
+@views.route('/page',methods=['GET', 'POST'])
+def page():
+    language = ""
+    oov  =""
+    wordstatus =""
+
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    s = "SELECT * FROM tokens FETCH FIRST 50 ROWS ONLY"
+    cur.execute(s) # Execute the SQL
+    list_users = cur.fetchall()
+    # colors = Token.query.all()
+
+    # THIS IS THE PART FOR PAGINATION
+    page = request.args.get('page', 1, type=int)
+    colors = Tokens.query.paginate(page=page, per_page=20)
+
+    return render_template('page.html', list_users = list_users,language=language,oov=oov,wordstatus=wordstatus,student=colors)
+
 
 
 @views.route('/search',methods=['GET', 'POST'])
